@@ -1,4 +1,6 @@
-### Hi there 👋
+### Hi there 👋  
+I am Waleed Esmail, I am passionate about machine and deep learning algorithm, espcially the application to scintific discovery.
+I  also have a passion for learning more and sharing my knowledge with others. You can find me on [LinkedIn](https://www.linkedin.com/in/waleed-esmail-0b027b4b/).  
 
 <!--
 **wesmail/wesmail** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
