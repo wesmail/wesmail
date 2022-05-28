@@ -1,5 +1,5 @@
 ### Hi there 👋  
-I am Waleed Esmail, I am passionate about machine and deep learning algorithms, especially the application for scientific discovery.
+I am Waleed Esmail, I am passionate about machine and deep learning algorithms, especially the applications for scientific discovery.
 I also have a passion for learning more and sharing my knowledge with others. You can find me on <a href="https://www.linkedin.com/in/waleed-esmail-0b027b4b/"><img align="none" src="https://github.com/wesmail/wesmail/blob/main/images/linkedin.png" alt="icon | LinkedIn" width="21px"/></a>.  
 
 <!--
