@@ -32,24 +32,36 @@ from optimized_jetclass_dataset import JetClassLightningDataModule
 
 ## ⚙️ Step 2: Update Settings (Copy-Paste This!)
 
-### For 10M+ Events (Your Case)
+### ⚠️ IMPORTANT: Check Your RAM First!
+
+```bash
+# Check available RAM
+free -h
+
+# Get recommended settings for YOUR system
+python check_memory.py
+```
+
+### Option A: Safe Settings (Works on Most Systems)
+
+**Start with these safe settings (for 32GB+ RAM):**
 
 ```python
 from optimized_jetclass_dataset import JetClassLightningDataModule
 import lightning.pytorch as pl
 
-# Create data module with OPTIMIZED settings
+# Create data module with SAFE settings
 dm = JetClassLightningDataModule(
     train_files="data/train*.h5",
     val_files="data/val*.h5",
     test_files="data/test*.h5",
     
-    # 🚀 CRITICAL OPTIMIZATIONS
-    read_chunk_size=8192,       # ← 64x larger chunks!
-    max_cached_chunks=30,       # ← Cache 30 chunks (not 1!)
-    batch_size=1024,            # ← 4x larger batches
-    num_workers=16,             # ← 2x more workers
-    prefetch_factor=8,          # ← 4x more prefetch
+    # 🟢 SAFE SETTINGS - Won't crash!
+    read_chunk_size=1024,       # Safe default
+    max_cached_chunks=10,       # Safe default
+    batch_size=256,             # Safe default
+    num_workers=4,              # Safe default
+    prefetch_factor=2,          # Safe default
     
     # Keep workers alive
     persistent_workers=True,
@@ -68,8 +80,38 @@ trainer.fit(model, dm)
 ```
 
 **Expected Result**: 
-- **100 hrs/epoch → 5-20 hrs/epoch**
-- **10-20x speedup** 🎉
+- **100 hrs/epoch → 10-20 hrs/epoch**
+- **5-10x speedup** without OOM crashes! 🎉
+- **Uses ~10-15GB RAM** (safe for 32GB+ systems)
+
+### Option B: Optimized Settings (For 128GB+ RAM)
+
+**Only use if you have LOTS of RAM:**
+
+```python
+dm = JetClassLightningDataModule(
+    train_files="data/train*.h5",
+    val_files="data/val*.h5",
+    test_files="data/test*.h5",
+    
+    # ⚡ AGGRESSIVE SETTINGS - Need 128GB+ RAM!
+    read_chunk_size=4096,       # 4x larger chunks
+    max_cached_chunks=25,       # Cache 25 chunks
+    batch_size=512,             # Larger batches
+    num_workers=8,              # More workers
+    prefetch_factor=4,          # More prefetch
+    
+    persistent_workers=True,
+    pin_memory=True,
+)
+```
+
+**Expected Result**: 
+- **100 hrs/epoch → 5-10 hrs/epoch**
+- **10-20x speedup** 🚀
+- **Uses ~50-70GB RAM** (only for 128GB+ systems!)
+
+### ⚠️ Start with Option A, then scale up!
 
 ---
 

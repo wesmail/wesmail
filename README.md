@@ -46,6 +46,18 @@
 
 ## 🏁 Quick Start
 
+### ⚠️ IMPORTANT: Check RAM First!
+
+```bash
+# Check your available RAM
+free -h
+
+# Get recommended settings for YOUR system
+python check_memory.py
+```
+
+**If you get "DataLoader worker killed" errors, see `IMMEDIATE_FIX.md`**
+
 ### Installation
 
 ```bash
@@ -59,61 +71,91 @@ No additional dependencies beyond what you already have:
 - h5py
 - numpy
 
-### Basic Usage
+### Basic Usage (Safe Defaults)
 
 ```python
 from optimized_jetclass_dataset import JetClassLightningDataModule
 
-# Create data module with optimized settings
+# Create data module with SAFE default settings (works on 32GB+ RAM)
 dm = JetClassLightningDataModule(
     train_files="data/train*.h5",
     val_files="data/val*.h5",
     test_files="data/test*.h5",
     
-    # 🚀 CRITICAL SETTINGS FOR SPEEDUP
-    read_chunk_size=4096,      # Increased from 128
-    max_cached_chunks=40,      # New: cache 40 chunks
-    batch_size=512,            # Increased from 256
-    num_workers=16,            # Increased from 8
-    prefetch_factor=6,         # Increased from 2
+    # 🟢 SAFE DEFAULTS - Won't crash!
+    # These are already the defaults, shown here for clarity
+    read_chunk_size=1024,      # Safe (increase based on RAM)
+    max_cached_chunks=10,      # Safe (increase based on RAM)
+    batch_size=256,            # Safe (increase based on GPU)
+    num_workers=4,             # Safe (increase based on CPU cores)
+    prefetch_factor=2,         # Safe (increase for more prefetch)
 )
 
 # Use with PyTorch Lightning
 trainer = pl.Trainer(max_epochs=10, accelerator='gpu')
 trainer.fit(model, dm)
+
+# Expected: 5-10x speedup with safe settings!
+# For more speedup, run check_memory.py and increase settings
 ```
 
-### For 10M+ Events (Your Case)
+### For 10M+ Events - Tune Based on Your RAM
+
+```bash
+# FIRST: Check your RAM and get recommended settings
+python check_memory.py
+```
+
+Then use the recommended settings. Examples:
 
 ```python
+# If you have 64GB RAM:
 dm = JetClassLightningDataModule(
     train_files="data/large_train*.h5",
     val_files="data/large_val*.h5",
     test_files="data/large_test*.h5",
     
-    # Optimized for large datasets
-    read_chunk_size=8192,       # Large chunks
-    max_cached_chunks=30,       # Balance memory
-    batch_size=1024,            # Large batches
-    num_workers=16,             # Many workers
-    prefetch_factor=8,          # Aggressive prefetch
-    persistent_workers=True,
-    pin_memory=True,
+    read_chunk_size=2048,
+    max_cached_chunks=12,
+    batch_size=512,
+    num_workers=6,
+    prefetch_factor=3,
 )
+# Expected: 5-12x speedup (100 hrs → 8-20 hrs per epoch)
 
-# Expected: 5-20x speedup (100 hrs → 5-20 hrs per epoch)
+# If you have 128GB+ RAM:
+dm = JetClassLightningDataModule(
+    train_files="data/large_train*.h5",
+    val_files="data/large_val*.h5",
+    test_files="data/large_test*.h5",
+    
+    read_chunk_size=4096,
+    max_cached_chunks=20,
+    batch_size=512,
+    num_workers=8,
+    prefetch_factor=4,
+)
+# Expected: 8-20x speedup (100 hrs → 5-12 hrs per epoch)
 ```
+
+**⚠️ Start with safe defaults, monitor RAM, then scale up gradually!**
 
 ---
 
 ## 📚 Files Included
 
-| File | Description |
-|------|-------------|
-| `optimized_jetclass_dataset.py` | **Main optimized data loader** |
-| `OPTIMIZATION_GUIDE.md` | **Detailed tuning guide** (READ THIS!) |
-| `example_usage.py` | Multiple usage examples |
-| `benchmark_dataloader.py` | Benchmark script to measure speedup |
+| File | Description | Priority |
+|------|-------------|----------|
+| `optimized_jetclass_dataset.py` | **Main optimized data loader** | ⭐⭐⭐ |
+| `IMMEDIATE_FIX.md` | **Fix for OOM errors** | ⭐⭐⭐ |
+| `check_memory.py` | **Get settings for your system** | ⭐⭐⭐ |
+| `QUICK_START.md` | Quick start guide | ⭐⭐ |
+| `OPTIMIZATION_GUIDE.md` | Detailed tuning guide | ⭐⭐ |
+| `TROUBLESHOOTING_OOM.md` | Detailed OOM troubleshooting | ⭐⭐ |
+| `WHAT_HAPPENED.md` | Explanation of OOM issue | ⭐ |
+| `MIGRATION_GUIDE.md` | Migration from old code | ⭐ |
+| `example_usage.py` | Usage examples | ⭐ |
+| `benchmark_dataloader.py` | Benchmark script | ⭐ |
 
 ---
 

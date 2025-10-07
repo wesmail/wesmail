@@ -67,8 +67,8 @@ class MultiFileJetClassDataset(Dataset):
         transform=None,
         reconstruct_full_adjacency=True,
         cache_file_info=True,
-        read_chunk_size=1024,  # INCREASED from 128
-        max_cached_chunks=20,  # NEW: Cache multiple chunks
+        read_chunk_size=1024,  # SAFE default (increase based on RAM)
+        max_cached_chunks=10,  # SAFE default (increase based on RAM)
         preload_to_ram=False,  # NEW: Preload to RAM option
         lazy_adjacency=False,  # NEW: Only reconstruct adjacency when needed
     ):
@@ -423,13 +423,13 @@ class JetClassLightningDataModule(LightningDataModule):
         train_files: Union[str, List[str]],
         val_files: Union[str, List[str]],
         test_files: Union[str, List[str]],
-        read_chunk_size=2048,  # INCREASED from 256
-        max_cached_chunks=30,  # Cache more chunks
-        batch_size: int = 512,  # INCREASED from 256
-        num_workers: int = 8,
+        read_chunk_size=1024,  # SAFE default (increase based on RAM)
+        max_cached_chunks=10,  # SAFE default (increase based on RAM)
+        batch_size: int = 256,  # SAFE default (increase based on GPU memory)
+        num_workers: int = 4,  # SAFE default (increase based on CPU cores)
         pin_memory: bool = True,
         persistent_workers: bool = True,
-        prefetch_factor: int = 4,  # INCREASED from 2
+        prefetch_factor: int = 2,  # SAFE default (increase for more prefetch)
         reconstruct_full_adjacency: bool = True,
         lazy_adjacency: bool = False,
         preload_to_ram: bool = False,
@@ -442,19 +442,24 @@ class JetClassLightningDataModule(LightningDataModule):
             train_files: Training HDF5 file(s) - supports glob patterns
             val_files: Validation HDF5 file(s) - supports glob patterns
             test_files: Test HDF5 file(s) - supports glob patterns
-            read_chunk_size: Samples per chunk (1024-4096 recommended)
-            max_cached_chunks: Chunks to cache per worker (tune based on RAM)
-            batch_size: Batch size (larger is often better for throughput)
-            num_workers: Parallel workers (set to CPU count or higher)
+            read_chunk_size: Samples per chunk (DEFAULT: 1024, increase to 2048-8192 based on RAM)
+            max_cached_chunks: Chunks to cache per worker (DEFAULT: 10, increase to 20-50 based on RAM)
+            batch_size: Batch size (DEFAULT: 256, increase to 512-1024 based on GPU memory)
+            num_workers: Parallel workers (DEFAULT: 4, increase to 8-16 based on CPU cores)
             pin_memory: Pin memory for GPU transfer
             persistent_workers: Keep workers alive between epochs
-            prefetch_factor: Batches to prefetch per worker
+            prefetch_factor: Batches to prefetch per worker (DEFAULT: 2, increase to 4-8 for more prefetch)
             reconstruct_full_adjacency: Reconstruct symmetric adjacency matrices
             lazy_adjacency: Delay adjacency reconstruction
-            preload_to_ram: Load entire dataset to RAM (only for small datasets)
+            preload_to_ram: Load entire dataset to RAM (only for small datasets <50GB)
             train_transform: Training data transform
             val_transform: Validation data transform
             test_transform: Test data transform
+            
+        Note:
+            Defaults are SAFE for systems with 32GB+ RAM. 
+            Run check_memory.py to get optimized settings for your system.
+            Increase settings gradually while monitoring RAM usage.
         """
         super().__init__()
         
