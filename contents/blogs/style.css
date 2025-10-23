@@ -1,0 +1,142 @@
+/* Light palette */
+:root,
+:root[data-bs-theme="light"] {
+  --bs-body-bg: #faf7f2;
+  --bs-body-color: #1f1b16;
+
+  --bs-primary:   #6a5acd; /* slate purple */
+  --bs-secondary: #b5838d;
+  --bs-success:   #2fa36b;
+  --bs-info:      #2aa6b6;
+  --bs-warning:   #e5b567;
+  --bs-danger:    #d9534f;
+
+  /* Optional extras */
+  --bs-link-color:        #6a5acd;
+  --bs-link-hover-color:  #584ab2;
+}
+
+/* Dark palette */
+:root[data-bs-theme="dark"] {
+  --bs-body-bg: #0f1418;
+  --bs-body-color: #e6edf3;
+
+  --bs-primary:   #8ab4f8; /* soft blue */
+  --bs-secondary: #f6c177;
+  --bs-success:   #58d79c;
+  --bs-info:      #6bd3e2;
+  --bs-warning:   #ffd479;
+  --bs-danger:    #ff7b72;
+
+  --bs-link-color:       #8ab4f8;
+  --bs-link-hover-color: #75a2e8;
+}
+
+.fstyle-primary{
+  font-family: "DM Serif Display", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.fstyle-secondary{
+  font-family: "DM Serif Display", serif;
+  font-style: normal;
+}
+
+/* responsive square + nice crop */
+.avatar{
+  width: min(21vw, 620px);   /* scales down on small screens, caps at 420px */
+  aspect-ratio: 1 / 1;       /* forces a square box */
+  object-fit: cover;         /* no squish; crop to the circle */
+  display: block;            /* allows margin auto tricks if needed */
+}
+
+/* ---- Timeline (light/dark aware) ---- */
+.timeline-1 {
+  /* theme colors */
+  --tl-accent: var(--bs-primary);
+  --tl-muted: var(--bs-secondary-color);
+  --tl-panel: color-mix(in oklab, var(--bs-body-bg) 95%, var(--bs-body-color) 5%);
+
+  border-left: 3px solid var(--tl-accent);
+  border-radius: 0.5rem;
+  background: var(--tl-panel);
+  margin: 0 auto;
+  position: relative;
+  padding: 50px;
+  list-style: none;
+  text-align: left;
+  max-width: 50%;
+  color: var(--bs-body-color);
+}
+
+@media (max-width: 767px) {
+  .timeline-1 {
+    max-width: 98%;
+    padding: 25px;
+  }
+}
+
+.timeline-1 .event {
+  border-bottom: 1px dashed var(--bs-border-color);
+  padding-bottom: 25px;
+  margin-bottom: 25px;
+  position: relative;
+}
+
+.timeline-1 .event:last-of-type {
+  border: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.timeline-1 .event:before,
+.timeline-1 .event:after {
+  position: absolute;
+  display: block;
+  top: 0;
+}
+
+/* Use the job title label */
+.timeline-1 .event:before {
+  left: -207px;
+  content: attr(data-title);
+  text-align: right;
+  font-weight: 600;
+  font-size: 0.95em;
+  min-width: 140px;
+  color: var(--tl-muted);
+}
+
+@media (max-width: 767px) {
+  .timeline-1 .event:before {
+    left: 0;
+    text-align: left;
+    position: relative;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.timeline-1 .event:after {
+  box-shadow: 0 0 0 3px var(--tl-accent);
+  left: -55.8px;
+  background: var(--bs-body-bg);
+  border-radius: 50%;
+  height: 9px;
+  width: 9px;
+  content: "";
+  top: 5px;
+}
+
+@media (max-width: 767px) {
+  .timeline-1 .event:after {
+    left: -31.8px;
+  }
+}
+
+.experience-section{
+  background:
+    radial-gradient(900px 400px at 10% -10%, color-mix(in oklab, var(--bs-primary) 12%, transparent), transparent 90%),
+    radial-gradient(900px 400px at 90% 120%, color-mix(in oklab, var(--bs-success) 10%, transparent), transparent 60%);
+}
